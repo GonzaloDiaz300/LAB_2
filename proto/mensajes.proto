@@ -24,7 +24,7 @@ message ONUReq {
 }
 
 service Intercambios {
-    rpc Notificar(ContiReqReq) returns (int32);
+    rpc Notificar(ContiReq) returns (int32);
     rpc Buscar(OMSReq) returns (DTNResp);
     rpc Nombres(ONUReq) returns (int32);
 }
