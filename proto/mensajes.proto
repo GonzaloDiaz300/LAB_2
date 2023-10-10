@@ -10,6 +10,10 @@ message ContiReq {
     int32 estado = 3;
 }
 
+message ContiResp {
+    int32 respuesta = 1;
+}
+
 message OMSReq {
     int32 id = 1;
 }
@@ -23,8 +27,12 @@ message ONUReq {
     int32 estado = 1;
 }
 
+message ONUResp {
+    int32 respuesta = 1;
+}
+
 service Intercambios {
-    rpc Notificar(ContiReq) returns (int32);
+    rpc Notificar(ContiReq) returns (ContiResp);
     rpc Buscar(OMSReq) returns (DTNResp);
-    rpc Nombres(ONUReq) returns (int32);
+    rpc Nombres(ONUReq) returns (ONUResp);
 }
