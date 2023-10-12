@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"net"
+	"os"
+	"strings"
 
 	pb "github.com/GonzaloDiaz300/LAB_2/proto"
 	"google.golang.org/grpc"
@@ -31,13 +34,41 @@ type serverNode struct {
 }
 
 func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSReq) (*pb.DTNResp, error) {
+	var id string
+	var nombre string
+	var apellido string
 	fmt.Printf("Se recibió request de OMS para id: %d", in.GetId())
-	return &pb.DTNResp{Nombre: "miguelito", Apellido: "hasbulla"}, nil
+	//Abrir DATA.txt
+	archivo, err := os.Open("DATA.txt")
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return nil, nil
+	}
+	defer archivo.Close()
+
+	// Crea un lector para el archivo
+	lector := bufio.NewScanner(archivo)
+
+	if lector.Scan() {
+		// Lee la línea actual
+		linea := lector.Text()
+
+		// Divide la línea en dos partes utilizando " "
+		partes := strings.Split(linea, " ")
+		// Convierte las partes en enteros
+		id = partes[0]
+		nombre = partes[1]
+		apellido = partes[2]
+
+	}
+
+	fmt.Printf("Respuesta: %s %s (id: %s)", nombre, apellido, id)
+	return &pb.DTNResp{Nombre: nombre, Apellido: apellido}, nil
 }
 
 func main() {
 	//Puerto oms
-	listner, err := net.Listen("tcp", ":50056")
+	listener, err := net.Listen("tcp", ":50057")
 
 	if err != nil {
 		panic("cannot create tcp connection" + err.Error())
@@ -46,7 +77,7 @@ func main() {
 	serv := grpc.NewServer()
 	fmt.Printf("ServerNode Activo\n")
 	pb.RegisterIntercambiosServer(serv, &serverNode{})
-	if err = serv.Serve(listner); err != nil {
+	if err = serv.Serve(listener); err != nil {
 		panic("cannot initialize the server" + err.Error())
 	}
 }
