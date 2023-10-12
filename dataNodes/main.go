@@ -1,6 +1,7 @@
-package datanodes
+package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 
@@ -26,7 +27,12 @@ import (
 */
 
 type serverNode struct {
-	pb.UnimplementedNotificacionServer
+	pb.UnimplementedIntercambiosServer
+}
+
+func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSReq) (*pb.DTNResp, error) {
+	fmt.Printf("Se recibió request de OMS para id: %d", in.GetId())
+	return &pb.DTNResp{Nombre: "miguelito", Apellido: "hasbulla"}, nil
 }
 
 func main() {
@@ -39,7 +45,7 @@ func main() {
 
 	serv := grpc.NewServer()
 	fmt.Printf("ServerNode Activo\n")
-	pb.RegisterNotificacionServer(serv, &serverNode{})
+	pb.RegisterIntercambiosServer(serv, &serverNode{})
 	if err = serv.Serve(listner); err != nil {
 		panic("cannot initialize the server" + err.Error())
 	}
