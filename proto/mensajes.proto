@@ -7,7 +7,7 @@ option go_package = "github.com/GonzaloDiaz300/LAB_2/proto";
 message ContiReq {
     string nombre = 1;
     string apellido = 2;
-    int32 estado = 3;
+    string estado = 3;
 }
 
 message ContiResp {
@@ -16,6 +16,8 @@ message ContiResp {
 
 message OMSReq {
     int32 id = 1;
+    string nombre = 2;
+    string apellido = 3;
 }
 
 message DTNResp {
@@ -24,7 +26,7 @@ message DTNResp {
 }
 
 message ONUReq {
-    int32 estado = 1;
+    string estado = 1;
 }
 
 message ONUResp {

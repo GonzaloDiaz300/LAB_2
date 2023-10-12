@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	pb "github.com/GonzaloDiaz300/LAB_2/tree/main/proto"
+	pb "github.com/GonzaloDiaz300/LAB_2/proto"
 	"google.golang.org/grpc"
 )
 
@@ -45,8 +45,8 @@ func enviarMensaje(datanode string, mensaje int, wg *sync.WaitGroup) {
 		return
 	}
 	defer conn.Close()
-	serviceClient := pb.NewNotificacionClient(conn)
-	res, err := serviceClient.OMSReq(context.Background(), &pb.NotiReq{Solicitud: 100})
+	serviceClient := pb.NewIntercambiosClient(conn)
+	res, err := serviceClient.Buscar(context.Background(), &pb.OMSReq{Id: int32(ID)})
 	if err != nil {
 		panic("No se llego el mensaje " + err.Error())
 	}
@@ -57,11 +57,17 @@ func enviarMensaje(datanode string, mensaje int, wg *sync.WaitGroup) {
 
 func main() {
 
-	var wg sync.WaitGroup
-	for _, datanode := range DataNodes {
-		wg.Add(1)
-		go enviarMensaje(datanode, ID, &wg)
-	}
+	//Tiene que recibir los nombres de los continentes primero
+	var apellido string
 
+	var wg sync.WaitGroup
+	//Se envía la id a los DataNodes
+	if "A" <= string(apellido[0]) && string(apellido[0]) <= "M" {
+		wg.Add(1)
+		go enviarMensaje(DataNodes[0], ID, &wg)
+	} else if "N" <= string(apellido[0]) && string(apellido[0]) <= "Z" {
+		wg.Add(1)
+		go enviarMensaje(DataNodes[1], ID, &wg)
+	}
 	wg.Wait()
 }
