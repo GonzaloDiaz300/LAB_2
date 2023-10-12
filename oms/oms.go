@@ -36,12 +36,12 @@ func failOnError(err error, msg string) {
 
 var flag bool
 
-func enviarMensaje(databnode string, mensaje int, wg *sync.WaitGroup) {
+func enviarMensaje(datanode string, mensaje int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	// Aquí puedes implementar la lógica para enviar el mensaje al servidor especificado
-	conn, err := grpc.Dial(databnode, grpc.WithInsecure())
+	conn, err := grpc.Dial(datanode, grpc.WithInsecure())
 	if err != nil {
-		fmt.Printf("Error al conectar con %s: %v\n", databnode, err)
+		fmt.Printf("Error al conectar con %s: %v\n", datanode, err)
 		return
 	}
 	defer conn.Close()
@@ -58,9 +58,9 @@ func enviarMensaje(databnode string, mensaje int, wg *sync.WaitGroup) {
 func main() {
 
 	var wg sync.WaitGroup
-	for _, servidor := range servidores {
+	for _, datanode := range DataNodes {
 		wg.Add(1)
-		go enviarMensaje(servidor, ID, &wg)
+		go enviarMensaje(datanode, ID, &wg)
 	}
 
 	wg.Wait()
