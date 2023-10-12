@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	pb "github.com/GonzaloDiaz300/LAB_2/proto"
+	pb "github.com/GonzaloDiaz300/LAB_2/tree/main/proto"
 	"google.golang.org/grpc"
 )
 
@@ -60,7 +60,7 @@ func main() {
 	var wg sync.WaitGroup
 	for _, servidor := range servidores {
 		wg.Add(1)
-		go enviarMensaje(servidor, numero_llaves, &wg)
+		go enviarMensaje(servidor, ID, &wg)
 	}
 
 	wg.Wait()
