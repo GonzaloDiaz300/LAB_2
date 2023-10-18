@@ -34,13 +34,14 @@ type serverNode struct {
 }
 
 func (a *serverNode) Guardar(ctx context.Context, in *pb.OMSReq) (*pb.Confirmacion, error) {
+	//Abrir DATA.txt
 	linea := fmt.Sprintf("%d %s %s", in.Id, in.Nombre, in.Apellido)
 	go escribir_archivo(linea)
 	return &pb.Confirmacion{Respuesta: 1}, nil
 }
 
 func escribir_archivo(linea string) {
-    rutaCompleta := "dataNodes/DATA.txt" // Utilizando "/" como separador de ruta
+    rutaCompleta := "dataNodes2/DATA.txt" // Utilizando "/" como separador de ruta
 
     archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
     if err != nil {
@@ -93,7 +94,7 @@ func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp,
 
 func main() {
 	//Set puerto
-	listener, err := net.Listen("tcp", ":50053")
+	listener, err := net.Listen("tcp", ":50054")
 
 	if err != nil {
 		panic("cannot create tcp connection" + err.Error())

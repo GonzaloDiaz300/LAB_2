@@ -18,7 +18,7 @@ var onu = "localhost:50052"
 
 var DataNodes = []string{
 	"localhost:50053",
-	"localhost:50053",
+	"localhost:50054",
 }
 
 // IP´s de cada servidor:
@@ -36,16 +36,15 @@ var flag bool
 
 func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion, error) {
 	fmt.Printf("Estado Recibido: %s %s %s \n", in.Nombre, in.Apellido, in.Estado)
-	fmt.Printf("%s %t %t\n", string(in.Apellido[0]),"A" <= string(in.Apellido[0]),string(in.Apellido[0]) <= "M")
 	//Se envía la id a los DataNodes
 	if "A" <= string(in.Apellido[0]) && string(in.Apellido[0]) <= "M" {
 		go enviarMensaje(DataNodes[0], ID_datanode1, in.Nombre, in.Apellido)
-		linea := fmt.Sprintf("%d %s", ID_datanode1, in.Estado)
+		linea := fmt.Sprintf("%d 1 %s", ID_datanode1, in.Estado)
 		go escribir_archivo(linea)
 		ID_datanode1 += 2
 	} else if "N" <= string(in.Apellido[0]) && string(in.Apellido[0]) <= "Z" {
 		go enviarMensaje(DataNodes[1], ID_datanode2, in.Nombre, in.Apellido)
-		linea := fmt.Sprintf("%d %s", ID_datanode1, in.Estado)
+		linea := fmt.Sprintf("%d 2 %s", ID_datanode1, in.Estado)
 		go escribir_archivo(linea)
 		ID_datanode2 += 2
 	}

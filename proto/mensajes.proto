@@ -30,8 +30,7 @@ message ONUReq {
 }
 
 message ONUResp {
-    string nombre = 1;
-    string apellido = 2;
+    repeated string persona = 1;
 }
 
 message OMSONUReq {
