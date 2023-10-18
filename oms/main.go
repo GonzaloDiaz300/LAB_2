@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net"
 	"os"
-
+	"bufio"
+	"strconv"
+	"strings"
 	pb "github.com/GonzaloDiaz300/LAB_2/proto"
 	"google.golang.org/grpc"
 )
@@ -52,7 +54,84 @@ func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion,
 }
 
 func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
-	return &pb.ONUResp{Nombre: "Gonzalo", Apellido: "Diaz"}, nil
+	// Abre el archivo para lectura
+	archivo, err := os.Open("oms/DATA.txt")
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return nil, nil
+	}
+	defer archivo.Close()
+	// Crea un escáner (scanner) para leer el archivo línea por línea.
+    scanner := bufio.NewScanner(archivo)
+
+    
+    if err := scanner.Err(); err != nil {
+        fmt.Println("Error al leer el archivo:", err)
+    }
+
+	// Crear un canal para enviar líneas algorítmicamente.
+    lineChannel := make(chan string)
+	for scanner.Scan() {
+		lineChannel <- scanner.Text()
+	}
+	fmt.Printf("Estamos aqui0")
+	close(lineChannel) // Cerramos el canal cuando terminamos de enviar todas las líneas.
+	var stringpersonas []string
+	for line := range lineChannel {
+		// Divide la línea en dos partes utilizando "-"
+		partes := strings.Split(line," ")
+		fmt.Printf("Estamos aqui")
+		if partes[2]==in.Estado{
+			if partes[1]=="1"{
+				conn, err := grpc.Dial(DataNodes[0], grpc.WithInsecure())
+				if err != nil {
+					fmt.Printf("Error al conectar con %s: %v\n", DataNodes[0], err)
+					return nil, nil
+				}
+				defer conn.Close()
+				serviceClient := pb.NewIntercambiosClient(conn)
+				numero, err := strconv.Atoi(partes[0])
+				numeroInt32 := int32(numero)
+				if err != nil {
+					fmt.Println("Error al convertir el string a int32:", err)
+					return nil, nil
+				}
+				res, err := serviceClient.Buscar(context.Background(), &pb.OMSONUReq{Id:numeroInt32})
+				fmt.Printf("Estamos aqui2")
+				if err != nil {
+					panic("No se llego el mensaje " + err.Error())
+				}else{
+					stringpersonas = append(stringpersonas, res.Nombre+" "+res.Apellido)
+				}
+			}else{
+				conn, err := grpc.Dial(DataNodes[1], grpc.WithInsecure())
+				if err != nil {
+					fmt.Printf("Error al conectar con %s: %v\n", DataNodes[0], err)
+					return nil,nil
+				}
+				defer conn.Close()
+				serviceClient := pb.NewIntercambiosClient(conn)
+				numero, err := strconv.Atoi(partes[0])
+				numeroInt32 := int32(numero)
+				if err != nil {
+					fmt.Println("Error al convertir el string a int32:", err)
+					return nil, nil
+				}
+				res, err := serviceClient.Buscar(context.Background(), &pb.OMSONUReq{Id:numeroInt32})
+				fmt.Printf("Estamos aqui3")
+				if err != nil {
+					panic("No se llego el mensaje " + err.Error())
+				}else{
+					stringpersonas = append(stringpersonas, res.Nombre+" "+res.Apellido)
+				}
+			}
+		}
+    }
+	fmt.Printf("Estamos aqui4")
+	response := &pb.ONUResp{
+		Persona: stringpersonas,
+	}
+	return response, nil
 }
 
 func escribir_archivo(linea string) {
@@ -70,7 +149,7 @@ func escribir_archivo(linea string) {
         fmt.Println("Error al escribir en el archivo:", err)
         return
     }
-    fmt.Println("Datos escritos en el archivo exitosamente.")
+    //fmt.Println("Datos escritos en el archivo exitosamente.")
 }
 
 
@@ -88,7 +167,8 @@ func enviarMensaje(datanode string, id int, nombre string, apellido string) {
 		panic("No se llego el mensaje " + err.Error())
 	}
 	if res.Respuesta == 1{
-		fmt.Println("Persona se envio correctamente")
+		//fmt.Println("Persona se envio correctamente")
+		return 
 	}
 }
 
