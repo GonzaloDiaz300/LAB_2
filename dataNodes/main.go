@@ -67,8 +67,8 @@ func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSReq) (*pb.DTNResp, er
 }
 
 func main() {
-	//Puerto oms
-	listener, err := net.Listen("tcp", ":50057")
+	//Set puerto
+	listener, err := net.Listen("tcp", ":50053")
 
 	if err != nil {
 		panic("cannot create tcp connection" + err.Error())
@@ -80,4 +80,5 @@ func main() {
 	if err = serv.Serve(listener); err != nil {
 		panic("cannot initialize the server" + err.Error())
 	}
+	fmt.Println("lol")
 }
