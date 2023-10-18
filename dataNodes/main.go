@@ -33,7 +33,7 @@ type serverNode struct {
 	pb.UnimplementedIntercambiosServer
 }
 
-func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSReq) (*pb.DTNResp, error) {
+func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp, error) {
 	var id string
 	var nombre string
 	var apellido string
@@ -80,5 +80,4 @@ func main() {
 	if err = serv.Serve(listener); err != nil {
 		panic("cannot initialize the server" + err.Error())
 	}
-	fmt.Println("lol")
 }
