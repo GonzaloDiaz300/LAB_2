@@ -10,7 +10,7 @@ message ContiReq {
     string estado = 3;
 }
 
-message ContiResp {
+message Confirmacion {
     int32 respuesta = 1;
 }
 
@@ -30,11 +30,17 @@ message ONUReq {
 }
 
 message ONUResp {
-    int32 respuesta = 1;
+    string nombre = 1;
+    string apellido = 2;
+}
+
+message OMSONUReq {
+    int32 id = 1;
 }
 
 service Intercambios {
-    rpc Notificar(ContiReq) returns (ContiResp);
-    rpc Buscar(OMSReq) returns (DTNResp);
+    rpc Notificar(ContiReq) returns (Confirmacion);
+    rpc Guardar(OMSReq) returns (Confirmacion);
     rpc Nombres(ONUReq) returns (ONUResp);
+    rpc Buscar(OMSONUReq) returns (DTNResp);
 }
