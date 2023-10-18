@@ -18,7 +18,7 @@ var onu = "localhost:50052"
 
 var DataNodes = []string{
 	"localhost:50053",
-	"localhost:50054",
+	"localhost:50053",
 }
 
 // IP´s de cada servidor:
@@ -35,16 +35,17 @@ var ID_datanode2 = 1 //IDs que se le asignaran al datanode2, que seran siempre n
 var flag bool
 
 func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion, error) {
-	fmt.Printf("Estado Recibido: %s %s %s \n", in.Estado)
+	fmt.Printf("Estado Recibido: %s %s %s \n", in.Nombre, in.Apellido, in.Estado)
+	fmt.Printf("%s %t %t\n", string(in.Apellido[0]),"A" <= string(in.Apellido[0]),string(in.Apellido[0]) <= "M")
 	//Se envía la id a los DataNodes
 	if "A" <= string(in.Apellido[0]) && string(in.Apellido[0]) <= "M" {
 		go enviarMensaje(DataNodes[0], ID_datanode1, in.Nombre, in.Apellido)
-		linea := fmt.Sprintf("%d %s %s\n", ID_datanode1, in.Nombre, in.Apellido)
+		linea := fmt.Sprintf("%d %s", ID_datanode1, in.Estado)
 		go escribir_archivo(linea)
 		ID_datanode1 += 2
 	} else if "N" <= string(in.Apellido[0]) && string(in.Apellido[0]) <= "Z" {
 		go enviarMensaje(DataNodes[1], ID_datanode2, in.Nombre, in.Apellido)
-		linea := fmt.Sprintf("%d %s %s\n", ID_datanode2, in.Estado)
+		linea := fmt.Sprintf("%d %s", ID_datanode1, in.Estado)
 		go escribir_archivo(linea)
 		ID_datanode2 += 2
 	}
@@ -52,37 +53,27 @@ func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion,
 }
 
 func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
-	return &pb.ONUResp{}, nil
+	return &pb.ONUResp{Nombre: "Gonzalo", Apellido: "Diaz"}, nil
 }
 
 func escribir_archivo(linea string) {
-	// Nombre del archivo que deseas trabajar
-	filename := "DATA.txt"
+    rutaCompleta := "oms/DATA.txt" // Utilizando "/" como separador de ruta
 
-	// Intentar abrir el archivo en modo lectura
-	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer file.Close()
+    archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+    if err != nil {
+        fmt.Println("Error al abrir el archivo:", err)
+        return
+    }
+    defer archivo.Close()
 
-	// Si el archivo no existía previamente, escribir datos en él
-	if _, err = file.Stat(); os.IsNotExist(err) {
-		_, err = file.Write([]byte(linea))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Println("Archivo creado exitosamente.")
-	} else {
-		_, err = file.Write([]byte(linea))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-	}
+    _, err = fmt.Fprintln(archivo, linea)
+    if err != nil {
+        fmt.Println("Error al escribir en el archivo:", err)
+        return
+    }
+    fmt.Println("Datos escritos en el archivo exitosamente.")
 }
+
 
 func enviarMensaje(datanode string, id int, nombre string, apellido string) {
 	// Aquí puedes implementar la lógica para enviar el mensaje al servidor especificado
@@ -97,8 +88,8 @@ func enviarMensaje(datanode string, id int, nombre string, apellido string) {
 	if err != nil {
 		panic("No se llego el mensaje " + err.Error())
 	}
-	if res != nil && !flag {
-		flag = true
+	if res.Respuesta == 1{
+		fmt.Println("Persona se envio correctamente")
 	}
 }
 

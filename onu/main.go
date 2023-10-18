@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"net"
 	"sync"
-
+	"log"
+	"os"
 	pb "github.com/GonzaloDiaz300/LAB_2/proto"
 	"google.golang.org/grpc"
 )
@@ -27,7 +28,7 @@ func consultarOMS(ip_oms string, estado string, wg *sync.WaitGroup) {
 	}
 	defer conn.Close()
 	serviceClient := pb.NewIntercambiosClient(conn)
-	res, err := serviceClient.Nombres(context.Background(), &pb.ONUReq{Id: int32(id)})
+	res, err := serviceClient.Nombres(context.Background(), &pb.ONUReq{Estado: estado})
 	if err != nil {
 		panic("No se llego el mensaje " + err.Error())
 	}
@@ -45,15 +46,51 @@ func main() {
 	}
 
 	serv := grpc.NewServer()
-	fmt.Printf("Servidor ONU Activo\n")
+	fmt.Printf("Servidor ONU Activo en localhost:50052\n")
 	pb.RegisterIntercambiosServer(serv, &onu{})
 	if err = serv.Serve(listener); err != nil {
 		panic("cannot initialize the server" + err.Error())
 	}
+	conn, err := grpc.Dial(oms, grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("Error al conectar con %s: %v\n", oms, err)
+		return
+	}
+	defer conn.Close()
+	serviceClient := pb.NewIntercambiosClient(conn)
 
-	var wg sync.WaitGroup
-	//Se envía la id a los DataNodes
-	wg.Add(1)
-	go consultarOMS(oms, "infectados", &wg)
-	wg.Wait()
+	for {
+		fmt.Println("Seleccione una opción:")
+		fmt.Println("1) Preguntar por infectados")
+		fmt.Println("2) Preguntar por muertos")
+		fmt.Println("3) Cerrar los servidores")
+		fmt.Print("Opción: ")
+
+		var opcion int
+		_, err := fmt.Scanf("%d", &opcion)
+		if err != nil {
+			fmt.Println("Opción no válida")
+			continue
+		}
+		switch opcion {
+		case 1:
+			respuesta, err := serviceClient.Nombres(context.Background(), &pb.ONUReq{Estado: "INFECTADOS"})
+			if err != nil {
+				log.Fatalf("Error al solicitar infectados: %v", err)
+			}
+			fmt.Printf("Respuesta: %s\n", respuesta)
+		case 2:
+			respuesta, err := serviceClient.Nombres(context.Background(), &pb.ONUReq{Estado: "MUERTOS"})
+			if err != nil {
+				log.Fatalf("Error al solicitar muertos: %v", err)
+			}
+			fmt.Printf("Respuesta: %s\n", respuesta)
+		case 3:
+			fmt.Println("Servidores cerrados. Saliendo...")
+			os.Exit(0)
+		default:
+			fmt.Println("Opción no válida")
+		}
+	}
+
 }

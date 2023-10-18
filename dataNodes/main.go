@@ -33,6 +33,38 @@ type serverNode struct {
 	pb.UnimplementedIntercambiosServer
 }
 
+func (a *serverNode) Guardar(ctx context.Context, in *pb.OMSReq) (*pb.Confirmacion, error) {
+	//Abrir DATA.txt
+	archivo, err := os.Open("DATA.txt")
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return nil, nil
+	}
+	defer archivo.Close()
+	linea := fmt.Sprintf("%d %s %s", in.Id, in.Nombre, in.Apellido)
+	go escribir_archivo(linea)
+	return &pb.Confirmacion{Respuesta: 1}, nil
+}
+
+func escribir_archivo(linea string) {
+    rutaCompleta := "dataNodes/DATA.txt" // Utilizando "/" como separador de ruta
+
+    archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+    if err != nil {
+        fmt.Println("Error al abrir el archivo:", err)
+        return
+    }
+    defer archivo.Close()
+
+    _, err = fmt.Fprintln(archivo, linea)
+    if err != nil {
+        fmt.Println("Error al escribir en el archivo:", err)
+        return
+    }
+    fmt.Println("Datos escritos en el archivo exitosamente.")
+}
+
+
 func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp, error) {
 	var id string
 	var nombre string
