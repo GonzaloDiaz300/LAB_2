@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 
 	pb "github.com/GonzaloDiaz300/LAB_2/proto"
@@ -40,23 +41,22 @@ func (a *serverNode) Guardar(ctx context.Context, in *pb.OMSReq) (*pb.Confirmaci
 }
 
 func escribir_archivo(linea string) {
-    rutaCompleta := "dataNodes/DATA.txt" // Utilizando "/" como separador de ruta
+	rutaCompleta := "DATA.txt" // Utilizando "/" como separador de ruta
 
-    archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-    if err != nil {
-        fmt.Println("Error al abrir el archivo:", err)
-        return
-    }
-    defer archivo.Close()
+	archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return
+	}
+	defer archivo.Close()
 
-    _, err = fmt.Fprintln(archivo, linea)
-    if err != nil {
-        fmt.Println("Error al escribir en el archivo:", err)
-        return
-    }
-    fmt.Println("Datos escritos en el archivo exitosamente.")
+	_, err = fmt.Fprintln(archivo, linea)
+	if err != nil {
+		fmt.Println("Error al escribir en el archivo:", err)
+		return
+	}
+	fmt.Println("Datos escritos en el archivo exitosamente.")
 }
-
 
 func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp, error) {
 	var id string
@@ -74,7 +74,7 @@ func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp,
 	// Crea un lector para el archivo
 	lector := bufio.NewScanner(archivo)
 
-	if lector.Scan() {
+	for lector.Scan() {
 		// Lee la línea actual
 		linea := lector.Text()
 
@@ -82,13 +82,19 @@ func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp,
 		partes := strings.Split(linea, " ")
 		// Convierte las partes en enteros
 		id = partes[0]
-		nombre = partes[1]
-		apellido = partes[2]
+		id_int, _ := strconv.Atoi(id)
+		id_int32 := int32(id_int)
 
+		if id_int32 == in.GetId() {
+			nombre = partes[1]
+			apellido = partes[2]
+
+			fmt.Printf("Respuesta: %s %s (id: %s)", nombre, apellido, id)
+			return &pb.DTNResp{Nombre: nombre, Apellido: apellido}, nil
+		}
 	}
+	return nil, nil
 
-	fmt.Printf("Respuesta: %s %s (id: %s)", nombre, apellido, id)
-	return &pb.DTNResp{Nombre: nombre, Apellido: apellido}, nil
 }
 
 func main() {
