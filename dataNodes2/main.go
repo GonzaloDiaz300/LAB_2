@@ -41,23 +41,22 @@ func (a *serverNode) Guardar(ctx context.Context, in *pb.OMSReq) (*pb.Confirmaci
 }
 
 func escribir_archivo(linea string) {
-    rutaCompleta := "dataNodes2/DATA.txt" // Utilizando "/" como separador de ruta
+	rutaCompleta := "DATA.txt" // Utilizando "/" como separador de ruta
 
-    archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-    if err != nil {
-        fmt.Println("Error al abrir el archivo:", err)
-        return
-    }
-    defer archivo.Close()
+	archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return
+	}
+	defer archivo.Close()
 
-    _, err = fmt.Fprintln(archivo, linea)
-    if err != nil {
-        fmt.Println("Error al escribir en el archivo:", err)
-        return
-    }
-    fmt.Println("Datos escritos en el archivo exitosamente.")
+	_, err = fmt.Fprintln(archivo, linea)
+	if err != nil {
+		fmt.Println("Error al escribir en el archivo:", err)
+		return
+	}
+	fmt.Println("Datos escritos en el archivo exitosamente.")
 }
-
 
 func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp, error) {
 	var id string
