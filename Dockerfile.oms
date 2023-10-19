@@ -1,0 +1,13 @@
+FROM golang:1.21.1
+
+WORKDIR /oms
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY oms/main.go ./
+
+RUN go build -o oms_bin .
+
+ENTRYPOINT [ "/oms/oms_bin" ]

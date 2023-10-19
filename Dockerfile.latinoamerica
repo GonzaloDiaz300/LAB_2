@@ -1,0 +1,14 @@
+FROM golang:1.21.1
+
+WORKDIR /latinoamerica
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY latinoamerica/names.txt ./
+COPY latinoamerica/main.go ./
+
+RUN go build -o latinoamerica_bin .
+
+ENTRYPOINT [ "/latinoamerica/latinoamerica_bin" ]
