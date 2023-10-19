@@ -6,7 +6,7 @@ docker-OMS:
 #Crea dockerfile e inicia contenedor para servidor ONU
 docker-ONU:
 	docker build -f Dockerfile.onu . -t containerized_onu:latest
-	docker run --rm --name onu-server -p 50052:50052 --network="host" containerized_onu:latest
+	docker run --rm --name onu-server -p 50052:50052 --network="host" -i containerized_onu:latest
 
 #Crea dockerfile e inicia contenedores para servidores Datanodes
 docker-datanode:
