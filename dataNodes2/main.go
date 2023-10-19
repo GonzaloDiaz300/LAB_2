@@ -45,6 +45,7 @@ func escribir_archivo(linea string) {
 	rutaCompleta := "DATA.txt" // Utilizando "/" como separador de ruta
 
 	archivo, err := os.OpenFile(rutaCompleta, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	// archivo, err := os.Create(rutaCompleta)
 	if err != nil {
 		fmt.Println("Error al abrir el archivo:", err)
 		return
@@ -107,6 +108,14 @@ func main() {
 
 	serv := grpc.NewServer()
 	fmt.Printf("ServerNode Activo\n")
+
+	archivo, err := os.Create("DATA.txt")
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return
+	}
+	defer archivo.Close()
+
 	pb.RegisterIntercambiosServer(serv, &serverNode{})
 	if err = serv.Serve(listener); err != nil {
 		panic("cannot initialize the server" + err.Error())

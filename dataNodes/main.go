@@ -107,6 +107,14 @@ func main() {
 
 	serv := grpc.NewServer()
 	fmt.Printf("ServerNode Activo\n")
+
+	archivo, err := os.Create("DATA.txt")
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return
+	}
+	defer archivo.Close()
+
 	pb.RegisterIntercambiosServer(serv, &serverNode{})
 	if err = serv.Serve(listener); err != nil {
 		panic("cannot initialize the server" + err.Error())

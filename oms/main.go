@@ -195,9 +195,16 @@ func main() {
 	if err != nil {
 		panic("cannot create tcp connection" + err.Error())
 	}
-
 	serv := grpc.NewServer()
 	fmt.Printf("Servidor OMS Activo\n")
+
+	archivo, err := os.Create("DATA.txt")
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		return
+	}
+	defer archivo.Close()
+
 	pb.RegisterIntercambiosServer(serv, &oms{})
 	if err = serv.Serve(listner); err != nil {
 		panic("cannot initialize the server" + err.Error())

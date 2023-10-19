@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	pb "github.com/GonzaloDiaz300/LAB_2/proto"
 	"google.golang.org/grpc"
 )
@@ -33,8 +34,7 @@ func consultarOMS(ip_oms string, estado string) {
 	}
 }
 
-
-func main(){
+func main() {
 	//Set puerto
 	conn, err := grpc.Dial(oms, grpc.WithInsecure())
 	if err != nil {
@@ -44,14 +44,15 @@ func main(){
 	defer conn.Close()
 	serviceClient := pb.NewIntercambiosClient(conn)
 	for {
-		fmt.Println("Seleccione una opción:")
+		fmt.Println("\nSeleccione una opción:")
 		fmt.Println("1) Preguntar por infectados")
 		fmt.Println("2) Preguntar por muertos")
 		fmt.Println("3) Cerrar los servidores")
 		fmt.Println("Opción: ")
 
 		var opcion int
-		_, err := fmt.Scanf("%d", &opcion)
+		_, err := fmt.Scanf("%d\n", &opcion)
+
 		if err != nil {
 			fmt.Println("Opción no válida")
 			continue
