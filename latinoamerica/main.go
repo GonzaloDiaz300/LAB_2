@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-var servidor = "localhost:50051"
+var servidor = "dist077:50051"
 
 func main() {
 	// Aquí puedes implementar la lógica para enviar el mensaje al servidor especificado
@@ -78,7 +78,7 @@ func main() {
 			panic("No se llego el mensaje " + err.Error())
 		}
 		if res.Respuesta == 1 {
-			fmt.Println("Persona se envio correctamente")
+			fmt.Printf("Estado enviado: %s %s %s\n", partes[0], partes[1], estado)
 		}
 	}
 }

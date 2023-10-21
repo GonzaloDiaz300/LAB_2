@@ -18,29 +18,17 @@ type oms struct {
 	pb.UnimplementedIntercambiosServer
 }
 
-var onu = "localhost:50052"
-
 var DataNodes = []string{
-	"localhost:50053",
-	"localhost:50054",
-}
-
-// IP´s de cada servidor:
-var servidores = []string{
-	"localhost:50055",
-	"localhost:50056",
-	"localhost:50057",
-	"localhost:50058",
+	"dist079:50053",
+	"dist080:50054",
 }
 
 var ID_datanode1 = 0 //IDs que se le asignaran al datanode1, que seran siempre numeroos pares
 var ID_datanode2 = 1 //IDs que se le asignaran al datanode2, que seran siempre numeroos impares
 
-var flag bool
 var fileMutex sync.Mutex
 
 func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion, error) {
-	fmt.Printf("Estado Recibido: %s %s %s \n", in.Nombre, in.Apellido, in.Estado)
 	//Se envía la id a los DataNodes
 	if "A" <= string(in.Apellido[0]) && string(in.Apellido[0]) <= "M" {
 		go enviarMensaje(DataNodes[0], ID_datanode1, in.Nombre, in.Apellido)
@@ -53,6 +41,7 @@ func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion,
 		go escribir_archivo(linea)
 		ID_datanode2 += 2
 	}
+	fmt.Printf("Solicitud de Continente recibida: %s %s %s, mensaje enviado: 1\n", in.Nombre, in.Apellido, in.Estado)
 	return &pb.Confirmacion{Respuesta: 1}, nil
 }
 
@@ -79,7 +68,6 @@ func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
 		for line := range lineChannel {
 			// Divide la línea en dos partes utilizando "-"
 			partes := strings.Split(line, " ")
-			fmt.Printf("Estamos aqui")
 			if partes[2] == in.Estado {
 				if partes[1] == "1" {
 					conn, err := grpc.Dial(DataNodes[0], grpc.WithInsecure())
@@ -96,7 +84,6 @@ func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
 						return
 					}
 					res, err := serviceClient.Buscar(context.Background(), &pb.OMSONUReq{Id: numeroInt32})
-					fmt.Printf("Estamos aqui2")
 					if err != nil {
 						panic("No se llego el mensaje " + err.Error())
 					} else {
@@ -117,7 +104,6 @@ func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
 						return
 					}
 					res, err := serviceClient.Buscar(context.Background(), &pb.OMSONUReq{Id: numeroInt32})
-					fmt.Printf("Estamos aqui3")
 					if err != nil {
 						panic("No se llego el mensaje " + err.Error())
 					} else {
@@ -125,7 +111,6 @@ func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
 					}
 				}
 			}
-			fmt.Println("Línea leída:", line)
 		}
 	}()
 
@@ -138,12 +123,11 @@ func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
 
 	// Realiza la escritura en el archivo
 	fileMutex.Unlock()
-
-	fmt.Printf("Estamos aqui0")
 	close(lineChannel) // Cerramos el canal cuando terminamos de enviar todas las líneas.
 	response := &pb.ONUResp{
 		Persona: stringpersonas,
 	}
+	fmt.Printf("Solicitud de ONU recibida: %s, mensaje enviado: %s\n", in.Estado, response)
 	return response, nil
 }
 

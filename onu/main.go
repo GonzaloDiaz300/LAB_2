@@ -13,7 +13,7 @@ type onu struct {
 	pb.UnimplementedIntercambiosServer
 }
 
-var oms string = "localhost:50051"
+var oms string = "dist077:50051"
 var flag bool
 
 func consultarOMS(ip_oms string, estado string) {
