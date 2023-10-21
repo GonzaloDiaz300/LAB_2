@@ -19,8 +19,8 @@ type oms struct {
 }
 
 var DataNodes = []string{
-	"localhost:50053",
-	"localhost:50054",
+	"dist079:50053",
+	"dist080:50054",
 }
 
 var ID_datanode1 = 0 //IDs que se le asignaran al datanode1, que seran siempre numeroos pares
