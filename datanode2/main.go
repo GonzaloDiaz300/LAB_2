@@ -57,14 +57,14 @@ func escribir_archivo(linea string) {
 		fmt.Println("Error al escribir en el archivo:", err)
 		return
 	}
-	fmt.Printf("Solicitud de NameNode recibida:%s, mensaje enviado: 1\n",linea)
+	fmt.Printf("Solicitud de NameNode recibida:%s, mensaje enviado: 1\n", linea)
 }
 
 func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp, error) {
 	var id string
 	var nombre string
 	var apellido string
-	fmt.Printf("Se recibió request de OMS para id: %d", in.GetId())
+	fmt.Printf("Se recibió request de OMS para id: %d\n", in.GetId())
 	//Abrir DATA.txt
 	archivo, err := os.Open("DATA.txt")
 	if err != nil {

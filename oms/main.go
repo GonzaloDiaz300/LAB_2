@@ -18,25 +18,14 @@ type oms struct {
 	pb.UnimplementedIntercambiosServer
 }
 
-var onu = "localhost:50052"
-
 var DataNodes = []string{
 	"localhost:50053",
 	"localhost:50054",
 }
 
-// IP´s de cada servidor:
-var servidores = []string{
-	"localhost:50055",
-	"localhost:50056",
-	"localhost:50057",
-	"localhost:50058",
-}
-
 var ID_datanode1 = 0 //IDs que se le asignaran al datanode1, que seran siempre numeroos pares
 var ID_datanode2 = 1 //IDs que se le asignaran al datanode2, que seran siempre numeroos impares
 
-var flag bool
 var fileMutex sync.Mutex
 
 func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion, error) {
@@ -52,7 +41,7 @@ func (a *oms) Notificar(ctx context.Context, in *pb.ContiReq) (*pb.Confirmacion,
 		go escribir_archivo(linea)
 		ID_datanode2 += 2
 	}
-	fmt.Printf("Solicitud de Continente recibida: %s %s %s, mensaje enviado: 1", in.Nombre, in.Apellido, in.Estado)
+	fmt.Printf("Solicitud de Continente recibida: %s %s %s, mensaje enviado: 1\n", in.Nombre, in.Apellido, in.Estado)
 	return &pb.Confirmacion{Respuesta: 1}, nil
 }
 
@@ -138,7 +127,7 @@ func (a *oms) Nombres(ctx context.Context, in *pb.ONUReq) (*pb.ONUResp, error) {
 	response := &pb.ONUResp{
 		Persona: stringpersonas,
 	}
-	fmt.Printf("Solicitud de ONU recibida: %s, mensaje enviado: %s", in.Estado, response)
+	fmt.Printf("Solicitud de ONU recibida: %s, mensaje enviado: %s\n", in.Estado, response)
 	return response, nil
 }
 
