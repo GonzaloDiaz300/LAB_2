@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	pb "github.com/GonzaloDiaz300/LAB_2/proto"
 	"google.golang.org/grpc"
@@ -47,7 +46,6 @@ func main() {
 		fmt.Println("\nSeleccione una opción:")
 		fmt.Println("1) Preguntar por infectados")
 		fmt.Println("2) Preguntar por muertos")
-		fmt.Println("3) Cerrar los servidores")
 		fmt.Println("Opción: ")
 
 		var opcion int
@@ -72,9 +70,6 @@ func main() {
 			}
 			fmt.Printf("Esperando respuesta...\n")
 			fmt.Printf("Respuesta: %s\n", respuesta)
-		case 3:
-			fmt.Println("Servidores cerrados. Saliendo...")
-			os.Exit(0)
 		default:
 			fmt.Println("Opción no válida")
 		}
