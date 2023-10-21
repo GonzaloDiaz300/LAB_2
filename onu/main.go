@@ -62,14 +62,19 @@ func main() {
 				log.Fatalf("Error al solicitar infectados: %v", err)
 			}
 			fmt.Printf("Esperando respuesta...\n")
-			fmt.Printf("Respuesta: %s\n", respuesta)
+			for _, nombre := range respuesta.Persona {
+				fmt.Println(nombre)
+			}
 		case 2:
 			respuesta, err := serviceClient.Nombres(context.Background(), &pb.ONUReq{Estado: "MUERTA"})
 			if err != nil {
 				log.Fatalf("Error al solicitar muertos: %v", err)
 			}
 			fmt.Printf("Esperando respuesta...\n")
-			fmt.Printf("Respuesta: %s\n", respuesta)
+			// Itera sobre la lista de personas e imprime los nombres.
+			for _, nombre := range respuesta.Persona {
+				fmt.Println(nombre)
+			}
 		default:
 			fmt.Println("Opción no válida")
 		}
