@@ -1,9 +1,8 @@
-#Crea dockerfile e inicia contenedor para servidor ONU
-docker-ONU:
-	docker build -f Dockerfile.onu . -t containerized_onu:latest
-	docker run --rm --name onu-server -p 50052:50052 --network="host" -i containerized_onu:latest
-
+#Crea dockerfile e inicia contenedor para servidor OMS
+docker-OMS:
+	docker build -f Dockerfile.oms . -t containerized_oms:latest
+	docker run --rm --name oms-server -p 50051:50051 --network="host" containerized_oms:latest
 #Genera todas las imagenes de los servidores continentes.
 docker-continentes:
-	docker build -f Dockerfile.asia . -t containerized_asia:latest
-	docker run --rm --name asia-server -p 50056:50056 --network="host" containerized_asia:latest
+	docker build -f Dockerfile.australia . -t containerized_australia:latest
+	docker run --rm --name australia-server -p 50055:50055 --network="host" containerized_australia:latest
