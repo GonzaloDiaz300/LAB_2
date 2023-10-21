@@ -1,8 +1,8 @@
-#Crea dockerfile e inicia contenedor para servidor ONU
-docker-ONU:
-	docker build -f Dockerfile.onu . -t containerized_onu:latest
-	docker run --rm --name onu-server -p 50052:50052 --network="host" -i containerized_onu:latest
-#Genera imagen de asia
+#Crea dockerfile e inicia contenedores para servidores Datanodes
+docker-datanode:
+	docker build -f Dockerfile.datanode2 . -t containerized_datanode2:latest
+	docker run --rm --name datanode2-server -p 50054:50054 --network="host" containerized_datanode2:latest
+#Genera la imagen de latam
 docker-continentes:
-	docker build -f Dockerfile.asia . -t containerized_asia:latest
-	docker run --rm --name asia-server -p 50056:50056 --network="host" containerized_asia:latest
+	docker build -f Dockerfile.latinoamerica . -t containerized_latinoamerica:latest
+	docker run --rm --name latinoamerica-server -p 50058:50058 --network="host" containerized_latinoamerica:latest
