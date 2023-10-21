@@ -55,7 +55,7 @@ func escribir_archivo(linea string) {
 		fmt.Println("Error al escribir en el archivo:", err)
 		return
 	}
-	fmt.Println("Datos escritos en el archivo exitosamente.")
+	fmt.Printf("Solicitud de NameNode recibida:%s, mensaje enviado: 1\n",linea)
 }
 
 func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp, error) {
@@ -88,8 +88,7 @@ func (a *serverNode) Buscar(ctx context.Context, in *pb.OMSONUReq) (*pb.DTNResp,
 		if id_int32 == in.GetId() {
 			nombre = partes[1]
 			apellido = partes[2]
-
-			fmt.Printf("Respuesta: %s %s (id: %s)", nombre, apellido, id)
+			fmt.Printf("Solicitud de NameNode recibida:%s, mensaje enviado: %s %s\n", id, nombre, apellido)
 			return &pb.DTNResp{Nombre: nombre, Apellido: apellido}, nil
 		}
 	}
