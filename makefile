@@ -1,7 +1,8 @@
-docker-ONU:
-	docker build -f Dockerfile.onu . -t containerized_onu:latest
-	docker run --rm --name onu-server -p 50052:50052 --network="host" -i containerized_onu:latest
+#Crea dockerfile e inicia contenedores para servidores Datanodes
+docker-datanode:
+	docker build -f Dockerfile.datanode1 . -t containerized_datanode1:latest
+	docker run --rm --name datanode1-server -p 50053:50053 --network="host" containerized_datanode1:latest
 #Genera todas las imagenes de los servidores continentes.
 docker-continentes:
-	docker build -f Dockerfile.asia . -t containerized_asia:latest
-	docker run --rm --name asia-server -p 50056:50056 --network="host" containerized_asia:latest
+	docker build -f Dockerfile.europa . -t containerized_europa:latest
+	docker run --rm --name europa-server -p 50057:50057 --network="host" containerized_europa:latest
